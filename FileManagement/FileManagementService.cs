@@ -3,7 +3,7 @@ using SysmacStudioParameterEditorUserSelectionFileMaker.Core.Services;
 
 namespace SysmacStudioParameterEditorUserSelectionFileMaker.FileManagement
 {
-    internal class FileManagementService : IFileManagementService
+    public class FileManagementService : IFileManagementService
     {
         public string ReadAllText(string filePath)
         {
