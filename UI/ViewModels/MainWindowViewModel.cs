@@ -9,12 +9,15 @@ namespace SysmacStudioParameterEditorUserSelectionFileMaker.UI.ViewModels
 {
     internal class MainWindowViewModel : NotifyBase
     {
+        private const string ButtonTooltipMessage = "Family, Title and Indexes are required fields.";
+
         private readonly UserSelectionFileCreator userSelectionFileCreator;
         private string family;
         private string model;
         private string title;
         private string comment;
         private string indexesInput;
+        private string buttonTooltip;
 
         public string Family
         {
@@ -106,6 +109,23 @@ namespace SysmacStudioParameterEditorUserSelectionFileMaker.UI.ViewModels
             }
         }
 
+        public string ButtonTooltip
+        {
+            get
+            {
+                return buttonTooltip;
+            }
+
+            set
+            {
+                if (value != buttonTooltip)
+                {
+                    buttonTooltip = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
         public RelayCommand CreateFileCommand { get; private set; }
 
         public MainWindowViewModel(UserSelectionFileCreator userSelectionFileCreator)
@@ -120,11 +140,14 @@ namespace SysmacStudioParameterEditorUserSelectionFileMaker.UI.ViewModels
             Title = string.Empty;
             Comment = string.Empty;
             IndexesInput = string.Empty;
+            ButtonTooltip = ButtonTooltipMessage;
         }
 
         private bool CanExecuteCreateFileCommand()
         {
-            return !string.IsNullOrWhiteSpace(Family) && !string.IsNullOrWhiteSpace(Title) && IndexesListIsValid();
+            var fieldsAreValid = FieldsAreValid();
+            UpdateButtonTooltip(fieldsAreValid);
+            return fieldsAreValid;
         }
 
         private void ExecuteCreateFileCommand()
@@ -146,6 +169,11 @@ namespace SysmacStudioParameterEditorUserSelectionFileMaker.UI.ViewModels
                 };
                 userSelectionFileCreator.CreateFile(data, saveFileDialog.FileName);
             }
+        }
+
+        private bool FieldsAreValid()
+        {
+            return !string.IsNullOrWhiteSpace(Family) && !string.IsNullOrWhiteSpace(Title) && IndexesListIsValid();
         }
 
         private bool IndexesListIsValid()
@@ -178,6 +206,11 @@ namespace SysmacStudioParameterEditorUserSelectionFileMaker.UI.ViewModels
         private void UpdateCanExecute()
         {
             CreateFileCommand.RaiseCanExecuteChanged();
+        }
+
+        private void UpdateButtonTooltip(bool hideTooltip)
+        {
+            ButtonTooltip = hideTooltip ? string.Empty : ButtonTooltipMessage;
         }
     }
 }

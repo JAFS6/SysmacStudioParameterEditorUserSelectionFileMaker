@@ -28,7 +28,7 @@
                 <Label Grid.Row="3" Grid.Column="0" Content="Comment:"/>
             </Grid>
             <TextBox Text="{Binding Comment}" TextWrapping="Wrap" AcceptsReturn="True" AcceptsTab="True" VerticalAlignment="Stretch" Height="100" Width="300" HorizontalAlignment="Left" Margin="1,0,0,0" VerticalScrollBarVisibility="Auto"/>
-            <Button Content="Create file" Margin="0,90,0,0" Command="{Binding CreateFileCommand}"/>
+            <Button Content="Create file" Margin="0,90,0,0" Command="{Binding CreateFileCommand}" ToolTip="{Binding ButtonTooltip}" ToolTipService.ShowOnDisabled="True"/>
         </StackPanel>
         <StackPanel Margin="10,0,0,0">
             <Label Content="Indexes:"/>
