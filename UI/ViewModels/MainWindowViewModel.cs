@@ -127,6 +127,7 @@ namespace SysmacStudioParameterEditorUserSelectionFileMaker.UI.ViewModels
         }
 
         public RelayCommand CreateFileCommand { get; private set; }
+        public RelayCommand ClearFormCommand { get; private set; }
 
         public MainWindowViewModel(UserSelectionFileCreator userSelectionFileCreator)
         {
@@ -134,7 +135,13 @@ namespace SysmacStudioParameterEditorUserSelectionFileMaker.UI.ViewModels
 
             this.userSelectionFileCreator = userSelectionFileCreator;
             CreateFileCommand = new RelayCommand(o => ExecuteCreateFileCommand(), o => CanExecuteCreateFileCommand());
+            ClearFormCommand = new RelayCommand(o => ExecuteClearFormCommand());
 
+            InitializeForm();
+        }
+
+        private void InitializeForm()
+        {
             Family = string.Empty;
             Model = string.Empty;
             Title = string.Empty;
@@ -169,6 +176,11 @@ namespace SysmacStudioParameterEditorUserSelectionFileMaker.UI.ViewModels
                 };
                 userSelectionFileCreator.CreateFile(data, saveFileDialog.FileName);
             }
+        }
+
+        private void ExecuteClearFormCommand()
+        {
+            InitializeForm();
         }
 
         private bool FieldsAreValid()
