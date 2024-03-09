@@ -7,6 +7,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <AssemblyName>Sysmac Studio Parameter Editor User Selection File Maker</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
