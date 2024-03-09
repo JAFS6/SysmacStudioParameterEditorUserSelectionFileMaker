@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using System.Windows;
 
 using Microsoft.Win32;
@@ -22,6 +23,7 @@ namespace SysmacStudioParameterEditorUserSelectionFileMaker.UI.ViewModels
         private string comment;
         private string indexesInput;
         private string buttonTooltip;
+        private string versionLabel;
 
         public string Family
         {
@@ -130,6 +132,23 @@ namespace SysmacStudioParameterEditorUserSelectionFileMaker.UI.ViewModels
             }
         }
 
+        public string VersionLabel
+        {
+            get
+            {
+                return versionLabel;
+            }
+
+            set
+            {
+                if (value != versionLabel)
+                {
+                    versionLabel = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
         public RelayCommand CreateFileCommand { get; private set; }
         public RelayCommand ClearFormCommand { get; private set; }
 
@@ -140,6 +159,8 @@ namespace SysmacStudioParameterEditorUserSelectionFileMaker.UI.ViewModels
             this.userSelectionFileCreator = userSelectionFileCreator;
             CreateFileCommand = new RelayCommand(o => ExecuteCreateFileCommand(), o => CanExecuteCreateFileCommand());
             ClearFormCommand = new RelayCommand(o => ExecuteClearFormCommand());
+
+            VersionLabel = GetAssemblyVersion();
 
             InitializeForm();
         }
@@ -248,6 +269,13 @@ namespace SysmacStudioParameterEditorUserSelectionFileMaker.UI.ViewModels
             };
 
             Process.Start(startInfo);
+        }
+
+        private string GetAssemblyVersion()
+        {
+            Version version = Assembly.GetExecutingAssembly().GetName().Version;
+
+            return $"v{version.Major}.{version.Minor}.{version.Build}";
         }
     }
 }
