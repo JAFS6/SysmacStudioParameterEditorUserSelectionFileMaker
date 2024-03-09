@@ -7,22 +7,41 @@ using SysmacStudioParameterEditorUserSelectionFileMaker.Core.Services;
 
 namespace SysmacStudioParameterEditorUserSelectionFileMaker.Core.Logic
 {
-    public class UserSelectionFileCreator
+    public class UserSelectionFileManager
     {
         private readonly IFileManagementService fileManagementService;
+        private readonly UserSelectionSchemaValidator userSelectionSchemaValidator;
 
-        public UserSelectionFileCreator(IFileManagementService fileManagementService)
+        public UserSelectionFileManager(IFileManagementService fileManagementService)
         {
             ParameterChecker.IsNotNull(fileManagementService, nameof(fileManagementService));
 
             this.fileManagementService = fileManagementService;
+            this.userSelectionSchemaValidator = new UserSelectionSchemaValidator();
         }
 
-        public void CreateFile(UserSelection data, string path)
+        public void CreateFile(UserSelection data, string filePath)
         {
+            ParameterChecker.IsNotNull(data, nameof(data));
+            ParameterChecker.IsNotNullOrEmpty(filePath, nameof(filePath));
+
             var xmlDoc = GenerateXML(data);
             var prettyString = GetPrettyXmlString(xmlDoc);
-            this.fileManagementService.WriteAllText(path, prettyString);
+            fileManagementService.WriteAllText(filePath, prettyString);
+        }
+
+        public UserSelection LoadFile(string filePath)
+        {
+            ParameterChecker.IsNotNullOrEmpty(filePath, nameof(filePath));
+
+            if (fileManagementService.FileExists(filePath))
+            {
+                return ReadXML(filePath);
+            }
+            else
+            {
+                return null;
+            }
         }
 
         private static string GetPrettyXmlString(XmlDocument xmlDoc)
@@ -89,6 +108,52 @@ namespace SysmacStudioParameterEditorUserSelectionFileMaker.Core.Logic
             element.SetAttribute(attributeName1, attributeValue1);
             element.SetAttribute(attributeName2, attributeValue2);
             return element;
+        }
+
+        private UserSelection ReadXML(string filePath)
+        {
+            XmlDocument xmlDoc = new XmlDocument();
+
+            try
+            {
+                xmlDoc.LoadXml(fileManagementService.ReadAllText(filePath));
+            }
+            catch
+            {
+                return null;
+            }
+
+            var schemaIsValid = userSelectionSchemaValidator.IsSchemaValid(xmlDoc);
+
+            if (schemaIsValid)
+            {
+                var data = new UserSelection();
+
+                try
+                {
+                    XmlNode root = xmlDoc.DocumentElement;
+                    data.Family = root.SelectSingleNode("Family").Attributes["Name"].Value;
+                    data.Model = root.SelectSingleNode("Model").Attributes["Name"].Value;
+                    data.Title = root.SelectSingleNode("information").Attributes["name"].Value;
+                    data.Comment = root.SelectSingleNode("information").Attributes["comment"].Value;
+                    data.Indexes = new List<string>();
+
+                    XmlNodeList parameterNodes = root.SelectNodes("favourites/parameter");
+
+                    foreach (XmlNode parameterNode in parameterNodes)
+                    {
+                        data.Indexes.Add(parameterNode.Attributes["index"].Value);
+                    }
+                }
+                catch
+                {
+                    return null;
+                }
+
+                return data;
+            }
+
+            return null;
         }
     }
 }

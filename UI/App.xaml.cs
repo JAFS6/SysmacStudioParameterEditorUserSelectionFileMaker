@@ -19,8 +19,8 @@ namespace UI
             base.OnStartup(e);
 
             var fileManagementService = new FileManagementService();
-            var userSelectionFileCreator = new UserSelectionFileCreator(fileManagementService);
-            var mainWindowViewModel = new MainWindowViewModel(userSelectionFileCreator);
+            var userSelectionFileManager = new UserSelectionFileManager(fileManagementService);
+            var mainWindowViewModel = new MainWindowViewModel(userSelectionFileManager);
             var mainWindow = new MainWindow();
             mainWindow.DataContext = mainWindowViewModel;
             mainWindow.Show();

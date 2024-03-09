@@ -41,7 +41,7 @@ namespace SysmacStudioParameterEditorUserSelectionFileMaker.Tests
                 Indexes = indexes
             };
             var fileManagementServiceMock = new Mock<IFileManagementService>();
-            var target = new UserSelectionFileCreator(fileManagementServiceMock.Object);
+            var target = new UserSelectionFileManager(fileManagementServiceMock.Object);
 
             fileManagementServiceMock.Setup(m => m.WriteAllText(filePath, expectedContent)).Verifiable();
 

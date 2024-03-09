@@ -16,7 +16,7 @@ namespace SysmacStudioParameterEditorUserSelectionFileMaker.UI.ViewModels
     {
         private const string ButtonTooltipMessage = "Family, Title and Indexes are required fields.";
 
-        private readonly UserSelectionFileCreator userSelectionFileCreator;
+        private readonly UserSelectionFileManager userSelectionFileManager;
         private string family;
         private string model;
         private string title;
@@ -149,15 +149,17 @@ namespace SysmacStudioParameterEditorUserSelectionFileMaker.UI.ViewModels
             }
         }
 
-        public RelayCommand CreateFileCommand { get; private set; }
+        public RelayCommand LoadFileCommand { get; private set; }
+        public RelayCommand SaveFileCommand { get; private set; }
         public RelayCommand ClearFormCommand { get; private set; }
 
-        public MainWindowViewModel(UserSelectionFileCreator userSelectionFileCreator)
+        public MainWindowViewModel(UserSelectionFileManager userSelectionFileManager)
         {
-            ParameterChecker.IsNotNull(userSelectionFileCreator, nameof(userSelectionFileCreator));
+            ParameterChecker.IsNotNull(userSelectionFileManager, nameof(userSelectionFileManager));
 
-            this.userSelectionFileCreator = userSelectionFileCreator;
-            CreateFileCommand = new RelayCommand(o => ExecuteCreateFileCommand(), o => CanExecuteCreateFileCommand());
+            this.userSelectionFileManager = userSelectionFileManager;
+            LoadFileCommand = new RelayCommand(o => ExecuteLoadFileCommand());
+            SaveFileCommand = new RelayCommand(o => ExecuteSaveFileCommand(), o => CanExecuteSaveFileCommand());
             ClearFormCommand = new RelayCommand(o => ExecuteClearFormCommand());
 
             VersionLabel = GetAssemblyVersion();
@@ -175,14 +177,43 @@ namespace SysmacStudioParameterEditorUserSelectionFileMaker.UI.ViewModels
             ButtonTooltip = ButtonTooltipMessage;
         }
 
-        private bool CanExecuteCreateFileCommand()
+        private void ExecuteLoadFileCommand()
+        {
+            var loadFileDialog = new OpenFileDialog();
+            loadFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            loadFileDialog.Filter = "User selection|*.usel";
+
+            if (loadFileDialog.ShowDialog() == true)
+            {
+                var data = userSelectionFileManager.LoadFile(loadFileDialog.FileName);
+
+                if (data == null)
+                {
+                    MessageBox.Show("File couldn't be loaded! Check format.", "Alert", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+                else
+                {
+                    Family = data.Family;
+                    Model = data.Model;
+                    Title = data.Title;
+                    Comment = data.Comment;
+
+                    foreach (var item in data.Indexes)
+                    {
+                        IndexesInput = item + Environment.NewLine;
+                    }
+                }
+            }
+        }
+
+        private bool CanExecuteSaveFileCommand()
         {
             var fieldsAreValid = FieldsAreValid();
             UpdateButtonTooltip(fieldsAreValid);
             return fieldsAreValid;
         }
 
-        private void ExecuteCreateFileCommand()
+        private void ExecuteSaveFileCommand()
         {
             var saveFileDialog = new SaveFileDialog();
             saveFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
@@ -202,7 +233,7 @@ namespace SysmacStudioParameterEditorUserSelectionFileMaker.UI.ViewModels
                         Comment = Comment,
                         Indexes = ParseIndexesList()
                     };
-                    userSelectionFileCreator.CreateFile(data, saveFileDialog.FileName);
+                    userSelectionFileManager.CreateFile(data, saveFileDialog.FileName);
 
                     OpenSavingFolder(folderPath);
                 }
@@ -252,7 +283,7 @@ namespace SysmacStudioParameterEditorUserSelectionFileMaker.UI.ViewModels
 
         private void UpdateCanExecute()
         {
-            CreateFileCommand.RaiseCanExecuteChanged();
+            SaveFileCommand.RaiseCanExecuteChanged();
         }
 
         private void UpdateButtonTooltip(bool hideTooltip)
