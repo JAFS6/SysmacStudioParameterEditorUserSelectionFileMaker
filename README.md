@@ -2,7 +2,7 @@
 [![License](https://img.shields.io/github/license/JAFS6/SysmacStudioParameterEditorUserSelectionFileMaker)](https://github.com/JAFS6/SysmacStudioParameterEditorUserSelectionFileMaker/blob/main/LICENSE)
 [![](https://img.shields.io/badge/dotnet%20version-net8.0-blue)](https://dotnet.microsoft.com/es-es/download/dotnet/8.0)
 
-A tool to create .usel files for Sysmac Studio Parameter Editor
+A tool to create .usel files for [Sysmac Studio](https://industrial.omron.es/es/products/sysmac-studio) Parameter Editor
 
 ## :wrench: Setup
 
