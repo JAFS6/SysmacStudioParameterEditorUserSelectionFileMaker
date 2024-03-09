@@ -1,4 +1,4 @@
-# SysmacStudioParameterEditorUserSelectionFileMaker
+# Sysmac Studio Parameter Editor User Selection File Maker
 
 A tool to create .usel files for Sysmac Studio Parameter Editor
 
