@@ -4,8 +4,9 @@ A tool to create .usel files for Sysmac Studio Parameter Editor
 
 ## Setup
 
-1. Download [latest release](https://github.com/JAFS6/SysmacStudioParameterEditorUserSelectionFileMaker/releases/latest).
-2. Unzip.
+1. Make sure you have installed [.Net 8.0 Desktop Runtime](https://dotnet.microsoft.com/es-es/download/dotnet/thank-you/runtime-desktop-8.0.2-windows-x64-installer?cid=getdotnetcore).
+2. Download [latest release](https://github.com/JAFS6/SysmacStudioParameterEditorUserSelectionFileMaker/releases/latest).
+3. Unzip.
 
 ## How to create a new .usel file
 
