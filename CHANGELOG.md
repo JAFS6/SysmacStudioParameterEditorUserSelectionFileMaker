@@ -14,3 +14,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - SharedAssemblyInfo file.
 - Application version on main window get from assembly info.
 - Building and deployment scripts.
+- In session persistence of latest load/save folder.

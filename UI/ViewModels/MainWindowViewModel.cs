@@ -24,6 +24,7 @@ namespace SysmacStudioParameterEditorUserSelectionFileMaker.UI.ViewModels
         private string indexesInput;
         private string buttonTooltip;
         private string versionLabel;
+        private string latestLoadSaveFolderPath;
 
         public string Family
         {
@@ -175,16 +176,18 @@ namespace SysmacStudioParameterEditorUserSelectionFileMaker.UI.ViewModels
             Comment = string.Empty;
             IndexesInput = string.Empty;
             ButtonTooltip = ButtonTooltipMessage;
+            latestLoadSaveFolderPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
         }
 
         private void ExecuteLoadFileCommand()
         {
             var loadFileDialog = new OpenFileDialog();
-            loadFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            loadFileDialog.InitialDirectory = latestLoadSaveFolderPath;
             loadFileDialog.Filter = "User selection|*.usel";
 
             if (loadFileDialog.ShowDialog() == true)
             {
+                latestLoadSaveFolderPath = Path.GetDirectoryName(loadFileDialog.FileName);
                 var data = userSelectionFileManager.LoadFile(loadFileDialog.FileName);
 
                 if (data == null)
@@ -216,13 +219,15 @@ namespace SysmacStudioParameterEditorUserSelectionFileMaker.UI.ViewModels
         private void ExecuteSaveFileCommand()
         {
             var saveFileDialog = new SaveFileDialog();
-            saveFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            saveFileDialog.InitialDirectory = latestLoadSaveFolderPath;
             saveFileDialog.Filter = "User selection|*.usel";
             saveFileDialog.FileName = Title;
 
             if (saveFileDialog.ShowDialog() == true)
             {
                 string folderPath = Path.GetDirectoryName(saveFileDialog.FileName);
+                latestLoadSaveFolderPath = folderPath;
+
                 if (Directory.Exists(folderPath))
                 {
                     var data = new UserSelection()
