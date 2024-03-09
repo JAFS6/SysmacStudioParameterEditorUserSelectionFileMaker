@@ -27,13 +27,13 @@
                 <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}" Margin="0,1,0,1" Width="230" HorizontalAlignment="Left"/>
                 <Label Grid.Row="3" Grid.Column="0" Content="Comment:"/>
             </Grid>
-            <TextBox Text="{Binding Comment, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" AcceptsReturn="True" AcceptsTab="True" VerticalAlignment="Stretch" Height="100" Width="300" HorizontalAlignment="Left" Margin="1,0,0,0" VerticalScrollBarVisibility="Auto"/>
+            <TextBox Text="{Binding Comment, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" AcceptsReturn="True" VerticalAlignment="Stretch" Height="100" Width="300" HorizontalAlignment="Left" Margin="1,0,0,0" VerticalScrollBarVisibility="Auto"/>
             <Button Content="Create file" Margin="0,65,0,0" Command="{Binding CreateFileCommand}" ToolTip="{Binding ButtonTooltip}" ToolTipService.ShowOnDisabled="True"/>
             <Button Content="Clear form" Margin="0,5,0,0" Command="{Binding ClearFormCommand}"/>
         </StackPanel>
         <StackPanel Margin="10,0,0,0">
             <Label Content="Indexes:"/>
-            <TextBox Text="{Binding IndexesInput, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" AcceptsReturn="True" AcceptsTab="True" VerticalAlignment="Stretch" Height="350" Width="300" HorizontalAlignment="Left" Margin="1,0,0,0" VerticalScrollBarVisibility="Auto"/>
+            <TextBox Text="{Binding IndexesInput, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" AcceptsReturn="True" VerticalAlignment="Stretch" Height="350" Width="300" HorizontalAlignment="Left" Margin="1,0,0,0" VerticalScrollBarVisibility="Auto"/>
         </StackPanel>
     </StackPanel>
 </Window>
