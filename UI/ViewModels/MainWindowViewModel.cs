@@ -1,4 +1,8 @@
-﻿using Microsoft.Win32;
+﻿using System.Diagnostics;
+using System.IO;
+using System.Windows;
+
+using Microsoft.Win32;
 
 using SysmacStudioParameterEditorUserSelectionFileMaker.Core.Common.Validation;
 using SysmacStudioParameterEditorUserSelectionFileMaker.Core.DTOs;
@@ -166,15 +170,25 @@ namespace SysmacStudioParameterEditorUserSelectionFileMaker.UI.ViewModels
 
             if (saveFileDialog.ShowDialog() == true)
             {
-                var data = new UserSelection()
+                string folderPath = Path.GetDirectoryName(saveFileDialog.FileName);
+                if (Directory.Exists(folderPath))
                 {
-                    Family = Family,
-                    Model = Model,
-                    Title = Title,
-                    Comment = Comment,
-                    Indexes = ParseIndexesList()
-                };
-                userSelectionFileCreator.CreateFile(data, saveFileDialog.FileName);
+                    var data = new UserSelection()
+                    {
+                        Family = Family,
+                        Model = Model,
+                        Title = Title,
+                        Comment = Comment,
+                        Indexes = ParseIndexesList()
+                    };
+                    userSelectionFileCreator.CreateFile(data, saveFileDialog.FileName);
+
+                    OpenSavingFolder(folderPath);
+                }
+                else
+                {
+                    MessageBox.Show("Location invalid!", "Alert", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
         }
 
@@ -223,6 +237,17 @@ namespace SysmacStudioParameterEditorUserSelectionFileMaker.UI.ViewModels
         private void UpdateButtonTooltip(bool hideTooltip)
         {
             ButtonTooltip = hideTooltip ? string.Empty : ButtonTooltipMessage;
+        }
+
+        private void OpenSavingFolder(string folderPath)
+        {
+            ProcessStartInfo startInfo = new ProcessStartInfo
+            {
+                Arguments = folderPath,
+                FileName = "explorer.exe"
+            };
+
+            Process.Start(startInfo);
         }
     }
 }
