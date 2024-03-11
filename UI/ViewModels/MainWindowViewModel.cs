@@ -203,7 +203,7 @@ namespace SysmacStudioParameterEditorUserSelectionFileMaker.UI.ViewModels
 
                     foreach (var item in data.Indexes)
                     {
-                        IndexesInput = item + Environment.NewLine;
+                        IndexesInput += item + Environment.NewLine;
                     }
                 }
             }
