@@ -14,7 +14,8 @@ namespace SysmacStudioParameterEditorUserSelectionFileMaker.UI.ViewModels
 {
     internal class MainWindowViewModel : NotifyBase
     {
-        private const string ButtonTooltipMessage = "Family, Title and Indexes are required fields.";
+        private const string SaveFileButtonTooltipMessage = "Family, Title and Indexes are required fields.";
+        private const string OpenOutputFolderButtonTooltipMessage = "Save a file first.";
 
         private readonly UserSelectionFileManager userSelectionFileManager;
         private string family;
@@ -22,9 +23,11 @@ namespace SysmacStudioParameterEditorUserSelectionFileMaker.UI.ViewModels
         private string title;
         private string comment;
         private string indexesInput;
-        private string buttonTooltip;
+        private string saveFileButtonTooltip;
+        private string openOutputFolderButtonTooltip;
         private string versionLabel;
         private string latestLoadSaveFolderPath;
+        private string latestOutputFolderPath;
 
         public string Family
         {
@@ -39,7 +42,7 @@ namespace SysmacStudioParameterEditorUserSelectionFileMaker.UI.ViewModels
                 {
                     family = value;
                     RaisePropertyChanged();
-                    UpdateCanExecute();
+                    UpdateCanExecuteSaveFileCommand();
                 }
             }
         }
@@ -57,7 +60,7 @@ namespace SysmacStudioParameterEditorUserSelectionFileMaker.UI.ViewModels
                 {
                     model = value;
                     RaisePropertyChanged();
-                    UpdateCanExecute();
+                    UpdateCanExecuteSaveFileCommand();
                 }
             }
         }
@@ -75,7 +78,7 @@ namespace SysmacStudioParameterEditorUserSelectionFileMaker.UI.ViewModels
                 {
                     title = value;
                     RaisePropertyChanged();
-                    UpdateCanExecute();
+                    UpdateCanExecuteSaveFileCommand();
                 }
             }
         }
@@ -93,7 +96,7 @@ namespace SysmacStudioParameterEditorUserSelectionFileMaker.UI.ViewModels
                 {
                     comment = value;
                     RaisePropertyChanged();
-                    UpdateCanExecute();
+                    UpdateCanExecuteSaveFileCommand();
                 }
             }
         }
@@ -111,23 +114,40 @@ namespace SysmacStudioParameterEditorUserSelectionFileMaker.UI.ViewModels
                 {
                     indexesInput = value;
                     RaisePropertyChanged();
-                    UpdateCanExecute();
+                    UpdateCanExecuteSaveFileCommand();
                 }
             }
         }
 
-        public string ButtonTooltip
+        public string SaveFileButtonTooltip
         {
             get
             {
-                return buttonTooltip;
+                return saveFileButtonTooltip;
             }
 
             set
             {
-                if (value != buttonTooltip)
+                if (value != saveFileButtonTooltip)
                 {
-                    buttonTooltip = value;
+                    saveFileButtonTooltip = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        public string OpenOutputFolderButtonTooltip
+        {
+            get
+            {
+                return openOutputFolderButtonTooltip;
+            }
+
+            set
+            {
+                if (value != openOutputFolderButtonTooltip)
+                {
+                    openOutputFolderButtonTooltip = value;
                     RaisePropertyChanged();
                 }
             }
@@ -152,6 +172,7 @@ namespace SysmacStudioParameterEditorUserSelectionFileMaker.UI.ViewModels
 
         public RelayCommand LoadFileCommand { get; private set; }
         public RelayCommand SaveFileCommand { get; private set; }
+        public RelayCommand OpenOutputFolderCommand { get; private set; }
         public RelayCommand ClearFormCommand { get; private set; }
 
         public MainWindowViewModel(UserSelectionFileManager userSelectionFileManager)
@@ -161,6 +182,7 @@ namespace SysmacStudioParameterEditorUserSelectionFileMaker.UI.ViewModels
             this.userSelectionFileManager = userSelectionFileManager;
             LoadFileCommand = new RelayCommand(o => ExecuteLoadFileCommand());
             SaveFileCommand = new RelayCommand(o => ExecuteSaveFileCommand(), o => CanExecuteSaveFileCommand());
+            OpenOutputFolderCommand = new RelayCommand(o => ExecuteOpenOutputFolderCommand(), o => CanExecuteOpenOutputFolderCommand());
             ClearFormCommand = new RelayCommand(o => ExecuteClearFormCommand());
 
             VersionLabel = GetAssemblyVersion();
@@ -175,8 +197,12 @@ namespace SysmacStudioParameterEditorUserSelectionFileMaker.UI.ViewModels
             Title = string.Empty;
             Comment = string.Empty;
             IndexesInput = string.Empty;
-            ButtonTooltip = ButtonTooltipMessage;
+            SaveFileButtonTooltip = SaveFileButtonTooltipMessage;
+            OpenOutputFolderButtonTooltip = OpenOutputFolderButtonTooltipMessage;
             latestLoadSaveFolderPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            latestOutputFolderPath = null;
+            UpdateCanExecuteSaveFileCommand();
+            UpdateCanExecuteOpenOutputFolderCommand();
         }
 
         private void ExecuteLoadFileCommand()
@@ -187,6 +213,7 @@ namespace SysmacStudioParameterEditorUserSelectionFileMaker.UI.ViewModels
 
             if (loadFileDialog.ShowDialog() == true)
             {
+                InitializeForm();
                 latestLoadSaveFolderPath = Path.GetDirectoryName(loadFileDialog.FileName);
                 var data = userSelectionFileManager.LoadFile(loadFileDialog.FileName);
 
@@ -212,7 +239,7 @@ namespace SysmacStudioParameterEditorUserSelectionFileMaker.UI.ViewModels
         private bool CanExecuteSaveFileCommand()
         {
             var fieldsAreValid = FieldsAreValid();
-            UpdateButtonTooltip(fieldsAreValid);
+            UpdateSaveFileButtonTooltip(fieldsAreValid);
             return fieldsAreValid;
         }
 
@@ -238,15 +265,36 @@ namespace SysmacStudioParameterEditorUserSelectionFileMaker.UI.ViewModels
                         Comment = Comment,
                         Indexes = ParseIndexesList()
                     };
-                    userSelectionFileManager.CreateFile(data, saveFileDialog.FileName);
 
-                    OpenSavingFolder(folderPath);
+                    var operationSuccessful = userSelectionFileManager.CreateFile(data, saveFileDialog.FileName);
+
+                    if (operationSuccessful)
+                    {
+                        latestOutputFolderPath = folderPath;
+                        UpdateCanExecuteOpenOutputFolderCommand();
+                    }
+                    else
+                    {
+                        MessageBox.Show("An error ocurred while saving the file!", "Alert", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
                 }
                 else
                 {
                     MessageBox.Show("Location invalid!", "Alert", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
+        }
+
+        private bool CanExecuteOpenOutputFolderCommand()
+        {
+            var canOpen = !string.IsNullOrWhiteSpace(latestOutputFolderPath);
+            UpdateOpenOutputFolderButtonTooltip(canOpen);
+            return canOpen;
+        }
+
+        private void ExecuteOpenOutputFolderCommand()
+        {
+            OpenSavingFolder(latestOutputFolderPath);
         }
 
         private void ExecuteClearFormCommand()
@@ -286,14 +334,24 @@ namespace SysmacStudioParameterEditorUserSelectionFileMaker.UI.ViewModels
             return result;
         }
 
-        private void UpdateCanExecute()
+        private void UpdateCanExecuteOpenOutputFolderCommand()
+        {
+            OpenOutputFolderCommand.RaiseCanExecuteChanged();
+        }
+
+        private void UpdateCanExecuteSaveFileCommand()
         {
             SaveFileCommand.RaiseCanExecuteChanged();
         }
 
-        private void UpdateButtonTooltip(bool hideTooltip)
+        private void UpdateOpenOutputFolderButtonTooltip(bool hideTooltip)
         {
-            ButtonTooltip = hideTooltip ? string.Empty : ButtonTooltipMessage;
+            OpenOutputFolderButtonTooltip = hideTooltip ? string.Empty : OpenOutputFolderButtonTooltipMessage;
+        }
+
+        private void UpdateSaveFileButtonTooltip(bool hideTooltip)
+        {
+            SaveFileButtonTooltip = hideTooltip ? string.Empty : SaveFileButtonTooltipMessage;
         }
 
         private void OpenSavingFolder(string folderPath)

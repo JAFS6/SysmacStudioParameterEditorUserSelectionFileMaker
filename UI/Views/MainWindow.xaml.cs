@@ -11,7 +11,7 @@ namespace SysmacStudioParameterEditorUserSelectionFileMaker.UI.Views
             InitializeComponent();
         }
 
-        private void SaveFileButton_ToolTipOpening(object sender, ToolTipEventArgs e)
+        private void Button_ToolTipOpening(object sender, ToolTipEventArgs e)
         {
             var button = sender as Button;
             var command = button.Command as ICommand;

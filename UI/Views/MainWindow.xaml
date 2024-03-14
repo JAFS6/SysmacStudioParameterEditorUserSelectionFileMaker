@@ -30,9 +30,10 @@
                     <Label Grid.Row="3" Grid.Column="0" Content="Comment:"/>
                 </Grid>
                 <TextBox Text="{Binding Comment, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" AcceptsReturn="True" VerticalAlignment="Stretch" Height="100" Width="300" HorizontalAlignment="Left" Margin="1,0,0,0" VerticalScrollBarVisibility="Auto" KeyboardNavigation.TabIndex="3"/>
-                <Button Content="Load file" Margin="0,72,0,0" Command="{Binding LoadFileCommand}" KeyboardNavigation.TabIndex="5"/>
-                <Button Content="Save file" Margin="0,5,0,0" Command="{Binding SaveFileCommand}" ToolTip="{Binding ButtonTooltip}" ToolTipService.ShowOnDisabled="True" ToolTipOpening="SaveFileButton_ToolTipOpening" KeyboardNavigation.TabIndex="6"/>
-                <Button Content="Clear form" Margin="0,5,0,0" Command="{Binding ClearFormCommand}" KeyboardNavigation.TabIndex="7"/>
+                <Button Content="Load file" Margin="0,48,0,0" Command="{Binding LoadFileCommand}" KeyboardNavigation.TabIndex="5"/>
+                <Button Content="Save file" Margin="0,5,0,0" Command="{Binding SaveFileCommand}" ToolTip="{Binding SaveFileButtonTooltip}" ToolTipService.ShowOnDisabled="True" ToolTipOpening="Button_ToolTipOpening" KeyboardNavigation.TabIndex="6"/>
+                <Button Content="Open output folder" Margin="0,5,0,0" Command="{Binding OpenOutputFolderCommand}" ToolTip="{Binding OpenOutputFolderButtonTooltip}" ToolTipService.ShowOnDisabled="True" ToolTipOpening="Button_ToolTipOpening" KeyboardNavigation.TabIndex="7"/>
+                <Button Content="Clear form" Margin="0,5,0,0" Command="{Binding ClearFormCommand}" KeyboardNavigation.TabIndex="8"/>
             </StackPanel>
             <StackPanel Margin="10,0,0,0">
                 <Label Content="Indexes:"/>
