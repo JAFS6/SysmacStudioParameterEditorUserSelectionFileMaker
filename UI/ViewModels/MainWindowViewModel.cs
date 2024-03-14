@@ -27,7 +27,7 @@ namespace SysmacStudioParameterEditorUserSelectionFileMaker.UI.ViewModels
         private string openOutputFolderButtonTooltip;
         private string versionLabel;
         private string latestLoadSaveFolderPath;
-        private string latestOutputFolderPath;
+        private string latestFileSavedPath;
 
         public string Family
         {
@@ -200,7 +200,7 @@ namespace SysmacStudioParameterEditorUserSelectionFileMaker.UI.ViewModels
             SaveFileButtonTooltip = SaveFileButtonTooltipMessage;
             OpenOutputFolderButtonTooltip = OpenOutputFolderButtonTooltipMessage;
             latestLoadSaveFolderPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            latestOutputFolderPath = null;
+            latestFileSavedPath = null;
             UpdateCanExecuteSaveFileCommand();
             UpdateCanExecuteOpenOutputFolderCommand();
         }
@@ -266,7 +266,7 @@ namespace SysmacStudioParameterEditorUserSelectionFileMaker.UI.ViewModels
 
                     if (operationSuccessful)
                     {
-                        latestOutputFolderPath = folderPath;
+                        latestFileSavedPath = saveFileDialog.FileName;
                         UpdateCanExecuteOpenOutputFolderCommand();
                     }
                     else
@@ -283,14 +283,14 @@ namespace SysmacStudioParameterEditorUserSelectionFileMaker.UI.ViewModels
 
         private bool CanExecuteOpenOutputFolderCommand()
         {
-            var canOpen = !string.IsNullOrWhiteSpace(latestOutputFolderPath);
+            var canOpen = !string.IsNullOrWhiteSpace(latestFileSavedPath);
             UpdateOpenOutputFolderButtonTooltip(canOpen);
             return canOpen;
         }
 
         private void ExecuteOpenOutputFolderCommand()
         {
-            OpenSavingFolder(latestOutputFolderPath);
+            OpenSavingFolder(latestFileSavedPath);
         }
 
         private void ExecuteClearFormCommand()
@@ -328,11 +328,11 @@ namespace SysmacStudioParameterEditorUserSelectionFileMaker.UI.ViewModels
             SaveFileButtonTooltip = hideTooltip ? string.Empty : SaveFileButtonTooltipMessage;
         }
 
-        private void OpenSavingFolder(string folderPath)
+        private void OpenSavingFolder(string filePath)
         {
             ProcessStartInfo startInfo = new ProcessStartInfo
             {
-                Arguments = folderPath,
+                Arguments = $"/select,\"{filePath}\"",
                 FileName = "explorer.exe"
             };
 

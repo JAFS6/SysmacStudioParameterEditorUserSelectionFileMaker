@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Indexes can be separated in the same line by ',' and ';' as well as ' '. Empty entries will be removed.
+- Latest saved file is selected upon output folder opening.
 
 ### Changed
 
