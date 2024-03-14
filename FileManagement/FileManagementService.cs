@@ -12,12 +12,20 @@ namespace SysmacStudioParameterEditorUserSelectionFileMaker.FileManagement
             return File.ReadAllText(filePath);
         }
 
-        public void WriteAllText(string filePath, string content)
+        public bool WriteAllText(string filePath, string content)
         {
             ParameterChecker.IsNotNullOrEmpty(filePath, nameof(filePath));
             ParameterChecker.IsNotNullOrEmpty(content, nameof(content));
 
-            File.WriteAllText(filePath, content);
+            try
+            {
+                File.WriteAllText(filePath, content);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         public void CreatePath(string path)

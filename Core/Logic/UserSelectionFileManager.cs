@@ -20,14 +20,14 @@ namespace SysmacStudioParameterEditorUserSelectionFileMaker.Core.Logic
             this.userSelectionSchemaValidator = new UserSelectionSchemaValidator();
         }
 
-        public void CreateFile(UserSelection data, string filePath)
+        public bool CreateFile(UserSelection data, string filePath)
         {
             ParameterChecker.IsNotNull(data, nameof(data));
             ParameterChecker.IsNotNullOrEmpty(filePath, nameof(filePath));
 
             var xmlDoc = GenerateXML(data);
             var prettyString = GetPrettyXmlString(xmlDoc);
-            fileManagementService.WriteAllText(filePath, prettyString);
+            return fileManagementService.WriteAllText(filePath, prettyString);
         }
 
         public UserSelection LoadFile(string filePath)

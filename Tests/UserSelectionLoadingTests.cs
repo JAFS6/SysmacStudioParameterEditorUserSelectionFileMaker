@@ -4,7 +4,7 @@ using SysmacStudioParameterEditorUserSelectionFileMaker.Core.DTOs;
 using SysmacStudioParameterEditorUserSelectionFileMaker.Core.Logic;
 using SysmacStudioParameterEditorUserSelectionFileMaker.Core.Services;
 
-namespace Tests
+namespace SysmacStudioParameterEditorUserSelectionFileMaker.Tests
 {
     [TestClass]
     public class UserSelectionLoadingTests
