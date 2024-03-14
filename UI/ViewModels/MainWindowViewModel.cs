@@ -320,7 +320,7 @@ namespace SysmacStudioParameterEditorUserSelectionFileMaker.UI.ViewModels
 
             foreach (var line in lines)
             {
-                var indexes = line.Split(' ');
+                var indexes = line.Split(new char[] { ' ', ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
 
                 foreach (var index in indexes)
                 {
