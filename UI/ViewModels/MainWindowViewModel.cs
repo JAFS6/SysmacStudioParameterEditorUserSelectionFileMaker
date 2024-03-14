@@ -227,11 +227,7 @@ namespace SysmacStudioParameterEditorUserSelectionFileMaker.UI.ViewModels
                     Model = data.Model;
                     Title = data.Title;
                     Comment = data.Comment;
-
-                    foreach (var item in data.Indexes)
-                    {
-                        IndexesInput += item + Environment.NewLine;
-                    }
+                    IndexesInput = IndexesFormatter.ToString(data.Indexes);
                 }
             }
         }
@@ -263,7 +259,7 @@ namespace SysmacStudioParameterEditorUserSelectionFileMaker.UI.ViewModels
                         Model = Model,
                         Title = Title,
                         Comment = Comment,
-                        Indexes = ParseIndexesList()
+                        Indexes = IndexesFormatter.ToList(IndexesInput)
                     };
 
                     var operationSuccessful = userSelectionFileManager.CreateFile(data, saveFileDialog.FileName);
@@ -309,29 +305,7 @@ namespace SysmacStudioParameterEditorUserSelectionFileMaker.UI.ViewModels
 
         private bool IndexesListIsValid()
         {
-            return ParseIndexesList().Count() > 0;
-        }
-
-        private IList<string> ParseIndexesList()
-        {
-            var result = new List<string>();
-
-            var lines = IndexesInput.Split('\n');
-
-            foreach (var line in lines)
-            {
-                var indexes = line.Split(new char[] { ' ', ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
-
-                foreach (var index in indexes)
-                {
-                    if (!string.IsNullOrWhiteSpace(index))
-                    {
-                        result.Add(index.Trim());
-                    }
-                }
-            }
-
-            return result;
+            return IndexesFormatter.ToList(IndexesInput).Count() > 0;
         }
 
         private void UpdateCanExecuteOpenOutputFolderCommand()
